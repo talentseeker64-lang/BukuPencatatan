@@ -1,0 +1,23 @@
+{
+  "name": "procurement-ledger",
+  "version": "1.0.0",
+  "description": "Hyperledger Fabric TypeScript chaincode for Procurement & AP Ledger",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "start": "fabric-chaincode-node start"
+  },
+  "dependencies": {
+    "fabric-contract-api": "^2.5.4",
+    "fabric-shim": "^2.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "^5.0.0"
+  }
+}

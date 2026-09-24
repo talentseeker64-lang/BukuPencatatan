@@ -1,0 +1,49 @@
+{
+  "name": "procurement-network-org1",
+  "version": "1.0.0",
+  "client": {
+    "organization": "ProcurementMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "ProcurementMSP": {
+      "mspid": "ProcurementMSP",
+      "peers": [
+        "peer0.procurement.example.com"
+      ],
+      "certificateAuthorities": [
+        "ca.procurement.example.com"
+      ]
+    }
+  },
+  "peers": {
+    "peer0.procurement.example.com": {
+      "url": "grpcs://localhost:7051",
+      "tlsCACerts": {
+        "path": "${FABRIC_TLS_CERT_PATH}"
+      },
+      "grpcOptions": {
+        "ssl-target-name-override": "peer0.procurement.example.com",
+        "hostnameOverride": "peer0.procurement.example.com"
+      }
+    }
+  },
+  "certificateAuthorities": {
+    "ca.procurement.example.com": {
+      "url": "https://localhost:7054",
+      "caName": "ca-procurement",
+      "tlsCACerts": {
+        "path": "${FABRIC_TLS_CERT_PATH}"
+      },
+      "httpOptions": {
+        "verify": false
+      }
+    }
+  }
+}
