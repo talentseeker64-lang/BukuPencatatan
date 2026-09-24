@@ -43,6 +43,32 @@ Begitu angka di database diubah 1 rupiah pun, nilai hash lokalnya akan berubah d
 Sistem dan Auditor langsung membunyikan alarm:
 </div>
 
+
+Ketika Anda membuat tagihan utang (Accounts Payable) atau mencatat penerimaan barang (BAST/Surat Jalan), tidak ada kolom input harga.
+Sistem mengambil nilai harga secara otomatis dari data transaksi Purchase Order (PO) yang sudah disepakati sebelumnya di dalam database.
+Rumus alir data:
+Nilai total tagihan, mata uang, dan rincian nominal dihitung secara internal oleh sistem (server-side calculation) dari kontrak PO asal, bukan diketik bebas oleh petugas tagihan atau bagian keuangan.
+2. Mengapa Didesain Seperti Ini? (Prinsip Integritas Keuangan)
+Jika petugas bagian penagihan atau keuangan diperbolehkan mengetik manual harga di tahap penagihan/pelunasan:
+Rentan Salah Ketik (Human Error): Selisih angka antara pesanan awal dan tagihan.
+Rentan Kecurangan (Mark-up / Invoice Fraud): Oknum bisa sengaja mengetik angka tagihan yang lebih besar daripada harga pesanan yang disepakati di awal.
+Dengan mengunci nilai harga agar selalu ditarik langsung dari objek transaksi PO di database, sistem menjamin bahwa tagihan yang timbul 100% konsisten dengan pesanan barang yang sah.
+3. Lalu Bagaimana dengan Pembuatan PO di Awal?
+Hanya pada saat penerbitan Purchase Order awal (menu Purchase Orders 
+ Buat PO Baru), Pejabat Pengadaan memilih item barang/jasa beserta kuantitas dan harga satuan sesuai kontrak pengadaan.
+Begitu PO tersebut diterbitkan (ISSUED):
+Total nominal dikonversi ke satuan terkecil (minor units/sen integer).
+Nilai tersebut disegel ke blockchain dengan event PO_ISSUED.
+Sejak detik itu, angka harga terkunci permanen. Tahap berikutnya (Penerimaan Barang 
+ Tagihan Utang 
+ Persetujuan 
+ SP2D 
+ Pelunasan) hanya membaca dan meneruskan nilai transaksi tersebut tanpa ada input manual nominal lagi.
+4. Pembuktian di Fitur "Tamper Lab"
+Karakteristik ini juga yang menjadi dasar fitur Tamper Lab:
+Karena harga tidak diinput manual melainkan dibaca dari record transaksi database, jika seseorang mencoba membobol database dan mengubah variabel nominal tersebut secara sepihak, sistem langsung mendeteksi bahwa hash transaksi di database tidak lagi cocok dengan hash asli yang disegel di blockchain.
+
+
 ## Run Locally
 
 **Prerequisites:**  Node.js
