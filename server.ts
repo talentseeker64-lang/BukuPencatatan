@@ -28,7 +28,7 @@ async function startServer() {
   app.use(
     express.json({
       limit: '5mb',
-      verify: (req: Request, _res: Response, buf: Buffer, encoding?: import('buffer').BufferEncoding) => {
+      verify: (req: Request, _res: Response, buf: Buffer, encoding?: BufferEncoding) => {
         try {
           (req as unknown as { rawBody?: string }).rawBody = buf.toString(
             encoding || 'utf8',
