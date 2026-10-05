@@ -1,0 +1,151 @@
+---
+Organizations:
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: ../crypto-material/ordererOrganizations/example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - orderer.example.com:7050
+
+  - &ProcurementOrg
+    Name: ProcurementOrg
+    ID: ProcurementMSP
+    MSPDir: ../crypto-material/peerOrganizations/procurement.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('ProcurementMSP.admin', 'ProcurementMSP.peer', 'ProcurementMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('ProcurementMSP.admin', 'ProcurementMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('ProcurementMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('ProcurementMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.procurement.example.com
+        Port: 7051
+
+  - &VendorOrg
+    Name: VendorOrg
+    ID: VendorMSP
+    MSPDir: ../crypto-material/peerOrganizations/vendor.example.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('VendorMSP.admin', 'VendorMSP.peer', 'VendorMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('VendorMSP.admin', 'VendorMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('VendorMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('VendorMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.vendor.example.com
+        Port: 9051
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_5: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer.example.com:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 100
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+  Capabilities:
+    <<: *OrdererCapabilities
+
+Profiles:
+  ProcurementChannelGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      OrdererType: etcdraft
+      EtcdRaft:
+        Consenters:
+          - Host: orderer.example.com
+            Port: 7050
+            ClientTLSCert: ../crypto-material/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+            ServerTLSCert: ../crypto-material/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+      Organizations:
+        - *OrdererOrg
+      Capabilities: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *ProcurementOrg
+        - *VendorOrg
+      Capabilities: *ApplicationCapabilities
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities

@@ -1,0 +1,64 @@
+# Hyperledger Fabric Orderer Configuration
+General:
+  ListenAddress: 0.0.0.0
+  ListenPort: 7050
+  TLS:
+    Enabled: true
+    PrivateKey: tls/server.key
+    Certificate: tls/server.crt
+    RootCAs:
+      - tls/ca.crt
+    ClientAuthRequired: false
+  Cluster:
+    ClientCertificate: tls/server.crt
+    ClientPrivateKey: tls/server.key
+    RootCAs:
+      - tls/ca.crt
+  Keepalive:
+    ServerMinInterval: 60s
+    ServerInterval: 7200s
+    ServerTimeout: 20s
+  LocalMSPDir: msp
+  LocalMSPID: OrdererMSP
+  Profile:
+    Enabled: false
+  BCCSP:
+    Default: SW
+    SW:
+      Hash: SHA2
+      Security: 256
+  Authentication:
+    TimeWindow: 15m
+
+FileLedger:
+  Location: /var/hyperledger/production/orderer
+  Prefix: hyperledger-fabric-ordererledger
+
+RAMLedger:
+  HistorySize: 1000
+
+ChannelParticipation:
+  Enabled: true
+  MaxRequestBodySize: 1048576
+
+Admin:
+  ListenAddress: 0.0.0.0:7053
+  TLS:
+    Enabled: true
+    Certificate: tls/server.crt
+    PrivateKey: tls/server.key
+    ClientRootCAs:
+      - tls/ca.crt
+    ClientAuthRequired: true
+
+Operations:
+  ListenAddress: 0.0.0.0:8443
+  TLS:
+    Enabled: false
+
+Metrics:
+  Provider: disabled
+
+Consensus:
+  WALDir: /var/hyperledger/production/orderer/etcdraft/wal
+  SnapDir: /var/hyperledger/production/orderer/etcdraft/snapshot

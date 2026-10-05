@@ -1,0 +1,32 @@
+{
+  "name": "procurement-network-generic",
+  "version": "1.0.0",
+  "client": {
+    "organization": "ProcurementMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "ProcurementMSP": {
+      "mspid": "ProcurementMSP",
+      "peers": ["peer0.procurement.example.com"],
+      "certificateAuthorities": ["ca.procurement.example.com"]
+    }
+  },
+  "peers": {
+    "peer0.procurement.example.com": {
+      "url": "grpcs://localhost:7051",
+      "tlsCACerts": {
+        "path": "/etc/hyperledger/crypto-material/peerOrganizations/procurement.example.com/tlsca/tlsca.procurement.example.com-cert.pem"
+      },
+      "grpcOptions": {
+        "ssl-target-name-override": "peer0.procurement.example.com"
+      }
+    }
+  }
+}

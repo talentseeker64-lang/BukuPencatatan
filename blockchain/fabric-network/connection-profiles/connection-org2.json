@@ -1,0 +1,49 @@
+{
+  "name": "procurement-network-org2",
+  "version": "1.0.0",
+  "client": {
+    "organization": "VendorMSP",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "VendorMSP": {
+      "mspid": "VendorMSP",
+      "peers": [
+        "peer0.vendor.example.com"
+      ],
+      "certificateAuthorities": [
+        "ca.vendor.example.com"
+      ]
+    }
+  },
+  "peers": {
+    "peer0.vendor.example.com": {
+      "url": "grpcs://localhost:9051",
+      "tlsCACerts": {
+        "path": "${FABRIC_TLS_CERT_PATH}"
+      },
+      "grpcOptions": {
+        "ssl-target-name-override": "peer0.vendor.example.com",
+        "hostnameOverride": "peer0.vendor.example.com"
+      }
+    }
+  },
+  "certificateAuthorities": {
+    "ca.vendor.example.com": {
+      "url": "https://localhost:8054",
+      "caName": "ca-vendor",
+      "tlsCACerts": {
+        "path": "${FABRIC_TLS_CERT_PATH}"
+      },
+      "httpOptions": {
+        "verify": false
+      }
+    }
+  }
+}
